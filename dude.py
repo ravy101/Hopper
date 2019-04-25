@@ -1,31 +1,21 @@
 import pygame
 import hopper
+import gameobject
 
-class Dude:
-    def __init__(self):
-        self.name = "dude"
-        self.xpos = 50
-        self.ypos = 50
-        self.xvel = 2
-        self.yvel = 0
-        self.xacc = 0
-        self.yacc = 0
-        self.image = pygame.image.load("dude.png")
-        self.gravity = .25
+class Dude(gameobject.GameObject):
+    def __init__(self, name, x, y, gravity):
+        super(Dude, self).__init__(name, x, y, gravity)
         self.grounded = True
+        self.image = pygame.image.load("dude.png")
 
-    def update(self):
-        self.xpos = self.xpos + self.xvel
-        ##TODO move this to a player game object extension
+
+    def playable_update(self):
         if self.xpos < 0:
             self.xpos = abs(self.xpos)
             self.xvel = abs(self.xvel)
         elif self.xpos > hopper.SCREEN_DIM[0]:
             self.xpos =  hopper.SCREEN_DIM[0] - (self.xpos -  hopper.SCREEN_DIM[0])
             self.xvel = -abs(self.xvel)
-        self.ypos = self.ypos + self.yvel
-        self.xvel = self.xvel + self.xacc
-        self.yvel = self.yvel + self.yacc + self.gravity
 
     def jump(self):
         self.yvel = self.yvel - 25
