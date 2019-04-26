@@ -1,5 +1,5 @@
 import pygame
-import hopper
+#import hopper
 import gameobject
 import gamesettings
 

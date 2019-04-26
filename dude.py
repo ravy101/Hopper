@@ -1,5 +1,5 @@
 import pygame
-import hopper
+import hoppercore
 import gameobject
 import gamesettings
 
@@ -28,16 +28,26 @@ class Dude(gameobject.GameObject):
         if self.yvel > 0:
             my_rect = self.get_rect_loc()
             left_side_line = (my_rect.bottomleft, (my_rect.bottomleft[0] + self.xvel, my_rect.bottomleft[1] + self.yvel))
+            right_side_line = (my_rect.bottomright, (my_rect.bottomright[0] + self.xvel, my_rect.bottomright[1] + self.yvel))
             #my_rect.bottomright
             self.on_ground = False
             for p in platforms:
-                platform_intersection = hopper.intersection(left_side_line, p.get_surface_line())
+                platform_intersection = hoppercore.intersection(left_side_line, p.get_surface_line())
+                    
                 if platform_intersection is not None:
                     self.xpos = platform_intersection[0]
+                else:
+                    platform_intersection = hoppercore.intersection(right_side_line, p.get_surface_line())
+                    if platform_intersection is not None:
+                        self.xpos = platform_intersection[0] - self.rect.width
+
+                    
+                if platform_intersection is not None:
                     self.ypos = platform_intersection[1] - self.rect.height
                     self.yvel = gamesettings.SCROLL_SPEED
                     self.on_ground = True
                     self.standing_on = p
+
 
         if self.on_ground == False:
             self.ypos = self.ypos + self.yvel
@@ -69,14 +79,14 @@ class Dude(gameobject.GameObject):
     
     def move_left(self):
         if self.on_ground:
-            self.xvel = self.xvel - 4
+            self.xvel = self.xvel - .3
         else:
-            self.xvel = self.xvel - 2
+            self.xvel = self.xvel - .1
     
     def move_right(self):
         if self.on_ground:
-            self.xvel = self.xvel + 4
+            self.xvel = self.xvel + .3
         else:
-            self.xvel = self.xvel + 2
+            self.xvel = self.xvel + .1
 
 
