@@ -27,13 +27,21 @@ def main():
     while running:
         # event handling, gets all event from the event queue
         clock.tick(gamesettings.FPS)
+        replace_blocks = 0
         for r in game_platforms:
             clear_game_object(screen, r)
             r.update()
             if r.out_of_bounds:
-                r = 
+                game_platforms.remove(r)
+                replace_blocks = replace_blocks + 1
+                continue
             draw_game_object(screen, r)
-            
+        
+        if replace_blocks > 0:
+            new_block = make_block(game_platforms[len(game_platforms) -1].xpos, game_platforms[len(game_platforms) -1].ypos, add_random=True)
+            game_platforms.append(new_block)
+            replace_blocks = 0
+        
         clear_game_object(screen, mydude)
         mydude.playable_update(game_platforms)
         blit_game_object(screen, mydude)

@@ -79,14 +79,14 @@ class Dude(gameobject.GameObject):
     
     def move_left(self):
         if self.on_ground:
-            self.xvel = self.xvel - .3
+            self.xvel = self.xvel - gamesettings.WALK_ACC
         else:
-            self.xvel = self.xvel - .1
+            self.xvel = self.xvel - gamesettings.WALK_ACC/3
     
     def move_right(self):
         if self.on_ground:
-            self.xvel = self.xvel + .3
+            self.xvel = self.xvel + gamesettings.WALK_ACC
         else:
-            self.xvel = self.xvel + .1
+            self.xvel = self.xvel + gamesettings.WALK_ACC/3
 
 

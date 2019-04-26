@@ -19,7 +19,7 @@ def end_game():
     pygame.event.post(pygame.event.Event(pygame.QUIT))
 
 
-#CREATE A BLOCK FACTORY
+
 
 def make_block(last_block_x, last_block_y, add_random = True):
     x_loc = last_block_x
