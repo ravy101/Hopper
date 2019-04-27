@@ -6,6 +6,12 @@ import gamesettings
 import numpy.random as rand
 from hoppercore import *
 
+def create_players(n = 10):
+    dudes = []
+    for i in range(n):
+        dudes.append(dude.Dude("Mr Duderstein {}".format(i), gamesettings.START_POS[0], gamesettings.START_POS[1]))
+    return(dudes)
+
 # define a main function
 def main():   
     # initialize the pygame module
@@ -19,7 +25,8 @@ def main():
     # create a surface on screen
     screen = pygame.display.set_mode(gamesettings.SCREEN_DIM)
     game_platforms = generate_start_blocks()
-    mydude = dude.Dude("Mr Duderstein", gamesettings.START_POS[0], gamesettings.START_POS[1], gamesettings.GRAVITY_ACC) 
+    live_dudes = create_players(5)
+    dead_dudes = []
     # define a variable to control the main loop
     running = True
 
@@ -42,32 +49,26 @@ def main():
             game_platforms.append(new_block)
             replace_blocks = 0
         
-        clear_game_object(screen, mydude)
-        mydude.playable_update(game_platforms)
-        blit_game_object(screen, mydude)
+        for mydude in live_dudes:
+            clear_game_object(screen, mydude)
+            mydude.playable_update(game_platforms)
+            blit_game_object(screen, mydude)
+            if not mydude.alive:
+                live_dudes.remove(mydude)
+                dead_dudes.append(mydude)
+
+
+        if len(live_dudes) == 0:
+            end_game(dead_dudes)
         pygame.display.flip()
         
         
-        if not mydude.alive:
-            end_game()
-
-        #CONTROLS
-        keys = pygame.key.get_pressed()  #checking pressed keys
-        if keys[pygame.K_LEFT]:
-            mydude.move_left()
-        if keys[pygame.K_RIGHT]:
-            mydude.move_right()
-
         for event in pygame.event.get():
             # only do something if the event is of type QUIT
             if event.type == pygame.QUIT:
                 # change the value to False, to exit the main loop
                 running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    mydude.jump()
-                elif event.key == pygame.K_q:
-                    end_game()
+
      
  
 # run the main function only if this module is executed as the main script

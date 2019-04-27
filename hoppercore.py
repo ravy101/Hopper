@@ -14,7 +14,7 @@ def draw_game_object(screen, game_object):
 def blit_game_object(screen, game_object):
     screen.blit(game_object.image, (game_object.xpos, game_object.ypos))   
 
-def end_game():
+def end_game(dead_dudes):
     print("YOU ARE DEAD")
     pygame.event.post(pygame.event.Event(pygame.QUIT))
 

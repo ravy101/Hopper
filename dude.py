@@ -2,21 +2,23 @@ import pygame
 import hoppercore
 import gameobject
 import gamesettings
-
+import control
 
 class Dude(gameobject.GameObject):
-    def __init__(self, name, x, y, gravity):
-        super(Dude, self).__init__(name, x, y, gravity)
+    def __init__(self, name, x, y):
+        super(Dude, self).__init__(name, x, y, gamesettings.GRAVITY_ACC)
         self.on_ground = False
         self.standing_on = None
         self.image = pygame.image.load("dude.png")
         self.rect = self.image.get_rect()
         self.alive = True
+        self.score = 0
+        self.control = control.KeyboardControl()
 
 
 
     def playable_update(self, platforms):
-        
+        self.score = self.score + 1
         #bounce off the walls
         if self.xpos < 0:
             self.xpos = abs(self.xpos)
@@ -64,12 +66,20 @@ class Dude(gameobject.GameObject):
         self.xvel = self.xvel + self.xacc
         self.yvel = self.yvel + self.yacc + self.gravity
         
-
-            
-
         #check if out of bounds
         if self.ypos > gamesettings.SCREEN_DIM[1]:
             self.alive = False 
+
+        #get input
+        control_input = self.control.get_input()
+        if control_input[0]:
+            self.move_left()
+        if control_input[1]:
+            self.move_right()
+        if control_input[2]:
+            self.jump()
+
+
 
     def jump(self):
         if self.on_ground:
