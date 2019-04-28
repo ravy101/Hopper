@@ -19,36 +19,37 @@ def end_game(dead_dudes):
     pygame.event.post(pygame.event.Event(pygame.QUIT))
     results = []
     for d in dead_dudes:
-        results.append(d.score, d.control.genome)
+        results.append((d.score, d.control.genome))
 
     return(results)
 
-def make_block(last_block_x, last_block_y, add_random = True):
+def make_block(last_block_x, last_block_y, points, add_random = True):
     x_loc = last_block_x
     y_loc = last_block_y
     
     if add_random:
         x_loc = x_loc + gamesettings.MAX_BLOCK_X_DELT * rand.uniform(-1,1)
-        y_loc = y_loc + gamesettings.MAX_BLOCK_Y_DELT * rand.uniform(-.5,-1)
+        y_loc = y_loc + gamesettings.MAX_BLOCK_Y_DELT * rand.uniform(-.7,-.7)
 
     if x_loc < 0:
         x_loc = abs(x_loc)
     elif x_loc > gamesettings.SCREEN_DIM[0] - gamesettings.BLOCK_WIDTH:
         x_loc =  gamesettings.SCREEN_DIM[0] - gamesettings.BLOCK_WIDTH - (x_loc % (gamesettings.SCREEN_DIM[0] - gamesettings.BLOCK_WIDTH))
 
-    block = gamerect.GameRect("block", x_loc, y_loc, gamesettings.BLOCK_WIDTH, gamesettings.BLOCK_HEIGHT)
+    block = gamerect.GameRect("block", x_loc, y_loc, gamesettings.BLOCK_WIDTH, gamesettings.BLOCK_HEIGHT, points)
     return block
 
 def generate_start_blocks():
     
-    new_block = make_block(gamesettings.START_POS[0] - 10, gamesettings.START_POS[1] + 60, add_random = False)
+    new_block = make_block(gamesettings.START_POS[0] - 10, gamesettings.START_POS[1] + 60, 1, add_random = False)
     y_val = new_block.ypos
     x_val = new_block.xpos
     blocks =[new_block]
+    rand.seed(10)
 
      
     while y_val  > 0:
-        new_block = make_block(x_val, y_val)
+        new_block = make_block(new_block.xpos, new_block.ypos, new_block.points + 1)
         y_val = new_block.ypos
         x_val = new_block.xpos
         blocks.append(new_block)

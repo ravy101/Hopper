@@ -42,4 +42,4 @@ def evolutionary_driver(n=10):
     # dump
     print(winner)
 
-evolutionary_driver(n=10)
+evolutionary_driver(n=1000000)

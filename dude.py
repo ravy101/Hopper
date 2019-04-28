@@ -13,15 +13,19 @@ class Dude(gameobject.GameObject):
         self.rect = self.image.get_rect()
         self.alive = True
         self.score = 0
+        self.is_ai = True
+        self.highest_block = 1
         if genome is None:
             self.control = control.KeyboardControl()
+            self.is_ai = False
         else:
             self.control = control.AgentControl(genome, config)
+            self.is_ai = True
 
 
 
     def playable_update(self, platforms):
-        self.score = self.score + 1
+        self.score = self.score + .1
         #bounce off the walls
         if gamesettings.WALL_BOUNCE == True:
             if self.xpos < 0:
@@ -53,6 +57,8 @@ class Dude(gameobject.GameObject):
                     self.yvel = gamesettings.SCROLL_SPEED
                     self.on_ground = True
                     self.standing_on = p
+                    if p.points > self.highest_block:
+                        self.highest_block = p.points
 
 
         if self.on_ground == False:
@@ -73,9 +79,14 @@ class Dude(gameobject.GameObject):
         #check if out of bounds
         if self.ypos > gamesettings.SCREEN_DIM[1]:
             self.alive = False 
+            self.score = self.score + 100 * self.highest_block
 
         #get input
-        control_input = self.control.get_input()
+        if self.is_ai:
+            control_input = self.control.get_input(sensors = self.get_sensors(platforms))
+        else:
+            control_input = self.control.get_input()
+
         if control_input[0]:
             self.move_left()
         if control_input[1]:
@@ -88,36 +99,68 @@ class Dude(gameobject.GameObject):
     def jump(self):
         if self.on_ground:
             self.on_ground = False
-            self.standing_on = None
             self.yvel = self.yvel - gamesettings.JUMP_SPEED
     
     def move_left(self):
         if self.on_ground:
             self.xvel = self.xvel - gamesettings.WALK_ACC
         else:
-            self.xvel = self.xvel - gamesettings.WALK_ACC/3
+            self.xvel = self.xvel - gamesettings.WALK_ACC
+        
+        if self.xvel < -gamesettings.SPEED_LIMIT:
+            self.xvel = - gamesettings.SPEED_LIMIT
     
     def move_right(self):
         if self.on_ground:
             self.xvel = self.xvel + gamesettings.WALK_ACC
         else:
-            self.xvel = self.xvel + gamesettings.WALK_ACC/3
+            self.xvel = self.xvel + gamesettings.WALK_ACC
+        
+        if self.xvel > gamesettings.SPEED_LIMIT:
+            self.xvel = gamesettings.SPEED_LIMIT
+        
 
 
-#TODO FINISH SENSORS
+
     def get_sensors(self,blocks):
+        my_rect = self.get_rect_loc()
+        current_rect = blocks[-3].get_rect_loc()
+        next_rect = blocks[-2].get_rect_loc()
+        rect_after_next = blocks[-1].get_rect_loc()
+        for b in blocks:
+            ydist =  b.ypos - self.ypos
+            
+            #set current and next rect to some default values to avoid passing nones
+
+            if ydist < gamesettings.MAX_BLOCK_Y_DELT and ydist >= 0:
+                #this is the closes block underneath
+                current_rect = b.get_rect_loc()
+            elif ydist <0 and ydist >= - gamesettings.MAX_BLOCK_Y_DELT:
+                #this is the next block above
+                next_rect = b.get_rect_loc()
+            elif ydist < -gamesettings.MAX_BLOCK_Y_DELT and ydist >= -gamesettings.MAX_BLOCK_Y_DELT * 2:
+                #this is the block after next
+                rect_after_next = b.get_rect_loc()
         sensors = [
             #grounded
             int(self.on_ground),
             self.xvel,
             self.yvel,
-
-            #nearest block
-            self.xpos + - blocks[0.xpos],
-            self.xpos
-
-            #next block
-
+            current_rect.top - my_rect.bottom,
+            #x distance between current block left edge and agent right foot
+            current_rect.topleft[0] - (my_rect.bottomright[0]),
+            #x distance between current block right edge and agent right foot
+            current_rect.topright[0] - (my_rect.bottomleft[0]),
+            #y dist between this and next
+            next_rect.top - my_rect.bottom,
+            next_rect.topleft[0] - (my_rect.bottomright[0]),
+            next_rect.topright[0] - (my_rect.bottomleft[0]),
+            rect_after_next.top - my_rect.bottom,
+            rect_after_next.topleft[0] - (my_rect.bottomright[0]),
+            rect_after_next.topright[0] - (my_rect.bottomleft[0])
         ]
+
+        for i in range(len(sensors)):
+            sensors[i] =  10000*sensors[i]
         
         return(sensors)
