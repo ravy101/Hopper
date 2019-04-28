@@ -17,9 +17,11 @@ def blit_game_object(screen, game_object):
 def end_game(dead_dudes):
     print("YOU ARE DEAD")
     pygame.event.post(pygame.event.Event(pygame.QUIT))
+    results = []
+    for d in dead_dudes:
+        results.append(d.score, d.control.genome)
 
-
-
+    return(results)
 
 def make_block(last_block_x, last_block_y, add_random = True):
     x_loc = last_block_x

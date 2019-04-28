@@ -5,7 +5,7 @@ import gamesettings
 import control
 
 class Dude(gameobject.GameObject):
-    def __init__(self, name, x, y):
+    def __init__(self, name, x, y, genome = None, config= None):
         super(Dude, self).__init__(name, x, y, gamesettings.GRAVITY_ACC)
         self.on_ground = False
         self.standing_on = None
@@ -13,19 +13,23 @@ class Dude(gameobject.GameObject):
         self.rect = self.image.get_rect()
         self.alive = True
         self.score = 0
-        self.control = control.KeyboardControl()
+        if genome is None:
+            self.control = control.KeyboardControl()
+        else:
+            self.control = control.AgentControl(genome, config)
 
 
 
     def playable_update(self, platforms):
         self.score = self.score + 1
         #bounce off the walls
-        if self.xpos < 0:
-            self.xpos = abs(self.xpos)
-            self.xvel = abs(self.xvel)
-        elif self.xpos > gamesettings.SCREEN_DIM[0]:
-            self.xpos =  gamesettings.SCREEN_DIM[0] - (self.xpos -  gamesettings.SCREEN_DIM[0])
-            self.xvel = -abs(self.xvel)
+        if gamesettings.WALL_BOUNCE == True:
+            if self.xpos < 0:
+                self.xpos = abs(self.xpos)
+                self.xvel = abs(self.xvel)
+            elif self.xpos > gamesettings.SCREEN_DIM[0]:
+                self.xpos =  gamesettings.SCREEN_DIM[0] - (self.xpos -  gamesettings.SCREEN_DIM[0])
+                self.xvel = -abs(self.xvel)
 
         if self.yvel > 0:
             my_rect = self.get_rect_loc()
@@ -100,3 +104,20 @@ class Dude(gameobject.GameObject):
             self.xvel = self.xvel + gamesettings.WALK_ACC/3
 
 
+#TODO FINISH SENSORS
+    def get_sensors(self,blocks):
+        sensors = [
+            #grounded
+            int(self.on_ground),
+            self.xvel,
+            self.yvel,
+
+            #nearest block
+            self.xpos + - blocks[0.xpos],
+            self.xpos
+
+            #next block
+
+        ]
+        
+        return(sensors)
