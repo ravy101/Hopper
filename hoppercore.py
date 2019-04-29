@@ -28,7 +28,7 @@ def make_block(last_block_x, last_block_y, points, add_random = True):
     y_loc = last_block_y
     
     if add_random:
-        x_loc = x_loc + gamesettings.MAX_BLOCK_X_DELT * rand.uniform(-1,1)
+        x_loc = x_loc + gamesettings.MAX_BLOCK_X_DELT * rand.uniform(.3,1) * rand.choice([-1,1], 1)
         y_loc = y_loc + gamesettings.MAX_BLOCK_Y_DELT * rand.uniform(-.7,-.7)
 
     if x_loc < 0:
@@ -41,14 +41,14 @@ def make_block(last_block_x, last_block_y, points, add_random = True):
 
 def generate_start_blocks():
     
-    new_block = make_block(gamesettings.START_POS[0] - 10, gamesettings.START_POS[1] + 60, 1, add_random = False)
+    new_block = make_block(gamesettings.START_POS[0], gamesettings.START_POS[1], 0, add_random = False)
     y_val = new_block.ypos
     x_val = new_block.xpos
     blocks =[new_block]
     rand.seed(10)
 
      
-    while y_val  > 0:
+    while y_val  > -300:
         new_block = make_block(new_block.xpos, new_block.ypos, new_block.points + 1)
         y_val = new_block.ypos
         x_val = new_block.xpos
@@ -66,7 +66,7 @@ def intersection(path, surface):
         path_v_dist = path[1][1] - path[0][1] 
         path_x_dist = path[1][0] - path[0][0]
         intersect_x = path[0][0] + path_x_dist * (v_dist/path_v_dist)
-        if intersect_x > min(surface[0][0], surface[1][0]) and intersect_x < max(surface[0][0], surface[1][0]):
+        if intersect_x >= min(surface[0][0], surface[1][0]) and intersect_x <= max(surface[0][0], surface[1][0]):
             #then we have an intersection
             intersection = (intersect_x, surface_height)       
     return(intersection)

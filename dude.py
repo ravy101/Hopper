@@ -11,6 +11,8 @@ class Dude(gameobject.GameObject):
         self.standing_on = None
         self.image = pygame.image.load("dude.png")
         self.rect = self.image.get_rect()
+        self.xpos = self.xpos + self.rect.width
+        self.ypos = self.ypos - self.rect.height
         self.alive = True
         self.score = 0
         self.is_ai = True
@@ -25,7 +27,7 @@ class Dude(gameobject.GameObject):
 
 
     def playable_update(self, platforms):
-        self.score = self.score + .1
+        
         #bounce off the walls
         if gamesettings.WALL_BOUNCE == True:
             if self.xpos < 0:
@@ -124,9 +126,11 @@ class Dude(gameobject.GameObject):
 
     def get_sensors(self,blocks):
         my_rect = self.get_rect_loc()
+
         current_rect = blocks[-3].get_rect_loc()
         next_rect = blocks[-2].get_rect_loc()
         rect_after_next = blocks[-1].get_rect_loc()
+    
         for b in blocks:
             ydist =  b.ypos - self.ypos
             
@@ -141,6 +145,7 @@ class Dude(gameobject.GameObject):
             elif ydist < -gamesettings.MAX_BLOCK_Y_DELT and ydist >= -gamesettings.MAX_BLOCK_Y_DELT * 2:
                 #this is the block after next
                 rect_after_next = b.get_rect_loc()
+                
         sensors = [
             #grounded
             int(self.on_ground),

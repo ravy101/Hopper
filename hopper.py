@@ -37,7 +37,7 @@ class HopperGame(object):
         scroll_speed_boost = 0
         # main loop
         while running:
-            # event handling, gets all event from the event queue
+            # event handling
             if self.human_player:
                 self.clock.tick(gamesettings.FPS)
             else:
@@ -56,6 +56,12 @@ class HopperGame(object):
             if replace_blocks > 0:
                 top_block = self.game_platforms[len(self.game_platforms) -1]
                 new_block = make_block(top_block.xpos, top_block.ypos, top_block.points + 1, add_random=True)
+                
+                #NEW STAGE, INCREASE THE SPEED OF BLOCKS
+                if new_block.points == gamesettings.STAGE_ONE or new_block.points == gamesettings.STAGE_TWO:
+                    for b in self.game_platforms:
+                        b.yvel = b.yvel + gamesettings.SCROLL_INCREMENT
+
                 self.game_platforms.append(new_block)
                 replace_blocks = 0
 
@@ -74,7 +80,7 @@ class HopperGame(object):
                     self.dead_dudes.append(mydude)
 
             #if there is a dude in the top 3rd of the screen
-            if highest_dude < gamesettings.SCREEN_DIM[1] / 3:
+            if highest_dude < gamesettings.SCREEN_DIM[1] / 4:
                 scroll_speed_boost = gamesettings.SCROLL_SPEED_BOOST
             else:
                 scroll_speed_boost = 0
@@ -86,6 +92,7 @@ class HopperGame(object):
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    #self.results = end_game(self.dead_dudes)
                     running = False
         
 if __name__ == "__main__":
