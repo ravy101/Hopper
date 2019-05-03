@@ -3,6 +3,7 @@ import pygame
 import gameobject
 import gamesettings
 
+# 
 class GameRect(gameobject.GameObject):
     def __init__(self, name, x, y, width, height, points):
         super(GameRect, self).__init__(name, x, y, 0)
