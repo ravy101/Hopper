@@ -11,7 +11,7 @@ class GameObject:
         self.yvel = 0
         self.xacc = 0
         self.yacc = 0
-        self.image = pygame.image.load("dude.png")
+        self.image = None
         self.gravity = gravity
         self.rect = None
         self.out_of_bounds = False

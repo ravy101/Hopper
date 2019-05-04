@@ -9,7 +9,7 @@ class Dude(gameobject.GameObject):
         super(Dude, self).__init__(name, x, y, gamesettings.GRAVITY_ACC)
         self.on_ground = False
         self.standing_on = None
-        self.image = pygame.image.load("dude.png")
+        self.image = pygame.image.load("Assets/dude.png")
         self.rect = self.image.get_rect()
         self.xpos = self.xpos + self.rect.width
         self.ypos = self.ypos - self.rect.height
