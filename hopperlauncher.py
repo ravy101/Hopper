@@ -1,12 +1,14 @@
 import hopper
 import neat
 
+current_generation = 0
+
 def evaluate_genomes(genomes, config):
 
     # Play game and get results
     idx,genomes = zip(*genomes)
-
-    game = hopper.HopperGame()
+    current_generation =   1
+    game = hopper.HopperGame(current_generation)
     game.create_players(genomes=genomes, config=config)
     game.play()
     results = game.results
@@ -16,9 +18,10 @@ def evaluate_genomes(genomes, config):
         score = r[0]
         genome = r[1]
         fitness = score * 3000 
-        genome.fitness = -1 if fitness == 0 else fitness
-
-
+        if fitness == 0:
+                genome.fitness = -1 
+        else:
+                genome.fitness = fitness
 
 
 def evolutionary_driver(generations=10):

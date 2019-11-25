@@ -14,7 +14,6 @@ class Dude(gameobject.GameObject):
         self.xpos = self.xpos + self.rect.width
         self.ypos = self.ypos - self.rect.height
         self.alive = True
-        self.score = 0
         self.is_ai = True
         self.highest_block = 1
         if genome is None:
@@ -81,7 +80,7 @@ class Dude(gameobject.GameObject):
         #check if out of bounds
         if self.ypos > gamesettings.SCREEN_DIM[1]:
             self.alive = False 
-            self.score = self.score + 100 * self.highest_block
+            
 
         #get input
         if self.is_ai:
@@ -121,7 +120,8 @@ class Dude(gameobject.GameObject):
         if self.xvel > gamesettings.SPEED_LIMIT:
             self.xvel = gamesettings.SPEED_LIMIT
         
-
+    def get_score(self):
+        return 100 * self.highest_block
 
 
     def get_sensors(self,blocks):

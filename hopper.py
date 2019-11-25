@@ -8,13 +8,17 @@ from hoppercore import *
 class HopperGame(object):
 
 
-    def __init__(self):   
+    def __init__(self, current_generation = None):   
         # initialize pygame
         pygame.init()
         self.human_player = False
         self.results = []
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("ITS HOPPER!")
+        # create a font object
+        self.font = pygame.font.Font('freesansbold.ttf', 24) 
+        
+
 
         # create a playing surface and start blocks
         self.screen = pygame.display.set_mode(gamesettings.SCREEN_DIM)
@@ -35,6 +39,7 @@ class HopperGame(object):
         
     def play(self):
         running = True
+        current_height = 0
         scroll_speed_boost = 0
         # ************************* MAIN LOOP *******************************
         while running:
@@ -51,6 +56,7 @@ class HopperGame(object):
                 r.ypos = r.ypos + scroll_speed_boost
                 r.update()
                 if r.out_of_bounds:
+                    current_height = r.points
                     self.game_platforms.remove(r)
                     replace_blocks = replace_blocks + 1
                     continue
@@ -84,6 +90,15 @@ class HopperGame(object):
                     self.live_dudes.remove(mydude)
                     self.dead_dudes.append(mydude)
 
+
+            # Render some info
+            summary_text = self.font.render('Current Height: {}'.format(current_height), True, gamesettings.WHITE, gamesettings.BLACK) 
+            textRect = summary_text.get_rect()
+            textRect.topleft = (0, 0) 
+            #if current_generation is not None:
+            #    summary_text = self.font.render('Current Height: {}'.format(0), True, gamesettings.WHITE, gamesettings.BLACK)  
+            self.screen.blit(summary_text, textRect)
+
             # If there is a dude in the top 3rd of the screen, then speed up the scrolling
             if highest_dude < gamesettings.SCREEN_DIM[1] / 4:
                 scroll_speed_boost = gamesettings.SCROLL_SPEED_BOOST
@@ -97,12 +112,16 @@ class HopperGame(object):
             pygame.display.flip()
             
             for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        self.results = end_game(self.dead_dudes + self.live_dudes)
                 if event.type == pygame.QUIT:
                     running = False
 
         #*********************************************************************
 
 
+# If this file is executed instead of the launcher then create a human player
 if __name__ == "__main__":
     game = HopperGame()
     game.human_player = True

@@ -15,12 +15,12 @@ def blit_game_object(screen, game_object):
     screen.blit(game_object.image, (game_object.xpos, game_object.ypos))   
 
 # End the game and save scores
-def end_game(dead_dudes):
+def end_game(dudes):
     print("YOU ARE DEAD")
     pygame.event.post(pygame.event.Event(pygame.QUIT))
     results = []
-    for d in dead_dudes:
-        results.append((d.score, d.control.genome))
+    for d in dudes:
+        results.append((d.get_score(), d.control.genome))
 
     return(results)
 
@@ -51,7 +51,7 @@ def generate_start_blocks():
     new_block = make_block()
     y_val = new_block.ypos
     blocks =[new_block]
-    rand.seed(10)
+    #rand.seed(10)
    
     while y_val  > -300:
         new_block = make_block(new_block)

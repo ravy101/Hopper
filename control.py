@@ -1,6 +1,7 @@
 import pygame
 import neat
 
+# This class implements get_input using the keyboard
 class KeyboardControl(object):
 
     def get_input(self, sensors = None):
@@ -16,6 +17,7 @@ class KeyboardControl(object):
 
         return(controls)
 
+# This class implements get_input using a genome
 class AgentControl(object):
     def __init__(self, genome, config):
         self.genome = genome
